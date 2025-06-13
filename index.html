@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Damage Assessment - Mobile Checklist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.4;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .project-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .project-info input, .project-info select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .section {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-header {
+            background: #1f2937;
+            color: white;
+            padding: 12px 15px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header.priority {
+            background: #dc2626;
+        }
+
+        .section-header.warning {
+            background: #f59e0b;
+            color: #1f2937;
+        }
+
+        .section-content {
+            display: none;
+            padding: 15px;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border-left: 3px solid #e5e7eb;
+        }
+
+        .checklist-item.checked {
+            border-left-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 2px;
+            transform: scale(1.2);
+        }
+
+        .checklist-item label {
+            flex: 1;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .input-field {
+            width: 100%;
+            margin-top: 8px;
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .measurement-group {
+            background: #fef3c7;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .measurement-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .measurement-row label {
+            min-width: 80px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .measurement-row input {
+            flex: 1;
+            padding: 4px 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        .scenario-box {
+            background: #e0f2fe;
+            border: 1px solid #0ea5e9;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+
+        .scenario-title {
+            font-weight: 600;
+            color: #0c4a6e;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            background: #e5e7eb;
+            border-radius: 10px;
+            height: 6px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #10b981, #059669);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #f8fafc;
+            text-align: center;
+        }
+
+        .stat {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+
+        .submit-section {
+            padding: 20px;
+            background: #f8fafc;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #059669;
+        }
+
+        .submit-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        .notes-area {
+            width: 100%;
+            min-height: 80px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .measurement-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .measurement-row label {
+                min-width: auto;
+                margin-bottom: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Water Damage Assessment</h1>
+            <p>IICRC S500-15 Compliant Checklist</p>
+        </div>
+
+        <div class="project-info">
+            <input type="text" id="location" placeholder="Property Address" />
+            <input type="text" id="propertySize" placeholder="Property Size (sq ft)" />
+            <select id="waterCategory">
+                <option value="">Select Water Category</option>
+                <option value="Category 1">Category 1 (Clean Water)</option>
+                <option value="Category 2">Category 2 (Gray Water)</option>
+                <option value="Category 3">Category 3 (Black Water)</option>
+            </select>
+            <input type="text" id="lossType" placeholder="Loss Type (e.g., AC overflow)" />
+            <input type="datetime-local" id="discoveryTime" />
+        </div>
+
+        <div class="summary-stats">
+            <div class="stat">
+                <div class="stat-number" id="completedTasks">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="totalTasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="progressPercent">0%</div>
+                <div class="stat-label">Progress</div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Priority Section -->
+        <div class="section">
+            <div class="section-header priority" onclick="toggleSection('priority')">
+                <span>⚠️ IMMEDIATE PRIORITIES</span>
+                <span class="toggle-icon" id="priority-icon">▼</span>
+            </div>
+            <div class="section-content" id="priority-content">
+                <div class="checklist-item">
+                    <input type="checkbox" id="timeWindow" onchange="updateProgress()">
+                    <label for="timeWindow">Verify time window - Category 1 becomes Category 2 in 24-48 hours</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="moldWindow" onchange="updateProgress()">
+                    <label for="moldWindow">Note mold growth window - 48-72 hours in Alabama humidity</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="materialWindow" onchange="updateProgress()">
+                    <label for="materialWindow">Material salvage assessment - 24 hours max for optimal results</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equipment Section -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('equipment')">
+                <span>🧰 EQUIPMENT CHECK</span>
+                <span class="toggle-icon" id="equipment-icon">▼</span>
+            </div>
+            <div class="section-content" id="equipment-content">
+                <div class="checklist-item">
+                    <input type="checkbox" id="moistureMeters" onchange="updateProgress()">
+                    <label for="moistureMeters">Moisture meters (invasive/non-invasive)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="psychrometer" onchange="updateProgress()">
+                    <label for="psychrometer">Psychrometer for humidity readings</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="camera" onchange="updateProgress()">
+                    <label for="camera">Photo/video equipment for documentation</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="inspection" onchange="updateProgress()">
+                    <label for="inspection">Flashlight/inspection tools</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="ppe" onchange="updateProgress()">
+                    <label for="ppe">Protective equipment (shoe covers, gloves)</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Safety Section -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('safety')">
+                <span>🛡️ SAFETY & SOURCE CONTROL</span>
+                <span class="toggle-icon" id="safety-icon">▼</span>
+            </div>
+            <div class="section-content" id="safety-content">
+                <div class="checklist-item">
+                    <input type="checkbox" id="sourceOff" onchange="updateProgress()">
+                    <label for="sourceOff">Source turned OFF (AC unit, water supply, etc.)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="electrical" onchange="updateProgress()">
+                    <label for="electrical">Electrical safety verified - no standing water near outlets</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="structural" onchange="updateProgress()">
+                    <label for="structural">Structural stability assessed - no sagging/warping</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="arrival" onchange="updateProgress()">
+                    <label for="arrival">Arrival time and conditions documented</label>
+                    <input type="datetime-local" class="input-field" placeholder="Arrival Time" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Source Investigation -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('source')">
+                <span>🔍 SOURCE INVESTIGATION</span>
+                <span class="toggle-icon" id="source-icon">▼</span>
+            </div>
+            <div class="section-content" id="source-content">
+                <div class="checklist-item">
+                    <input type="checkbox" id="sourceLoc" onchange="updateProgress()">
+                    <label for="sourceLoc">Source location identified and confirmed</label>
+                    <input type="text" class="input-field" placeholder="Source description" />
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="waterPath" onchange="updateProgress()">
+                    <label for="waterPath">Water flow path traced and mapped</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="volume" onchange="updateProgress()">
+                    <label for="volume">Estimated discharge volume</label>
+                    <input type="text" class="input-field" placeholder="Estimated gallons" />
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="materials" onchange="updateProgress()">
+                    <label for="materials">All affected materials identified</label>
+                    <textarea class="input-field" placeholder="List affected materials (flooring, drywall, contents, etc.)"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Moisture Detection -->
+        <div class="section">
+            <div class="section-header warning" onclick="toggleSection('moisture')">
+                <span>💧 MOISTURE DETECTION & MAPPING</span>
+                <span class="toggle-icon" id="moisture-icon">▼</span>
+            </div>
+            <div class="section-content" id="moisture-content">
+                <div class="measurement-group">
+                    <h4>Primary Affected Areas</h4>
+                    <div class="measurement-row">
+                        <label>Floor:</label>
+                        <input type="number" placeholder="%" step="0.1">
+                        <span>%</span>
+                    </div>
+                    <div class="measurement-row">
+                        <label>Walls:</label>
+                        <input type="number" placeholder="%" step="0.1">
+                        <span>%</span>
+                    </div>
+                    <div class="measurement-row">
+                        <label>Baseboards:</label>
+                        <input type="number" placeholder="%" step="0.1">
+                        <span>%</span>
+                    </div>
+                </div>
+
+                <div class="measurement-group">
+                    <h4>Secondary Areas</h4>
+                    <div class="measurement-row">
+                        <label>Adjacent Room:</label>
+                        <input type="number" placeholder="%" step="0.1">
+                        <span>%</span>
+                    </div>
+                    <div class="measurement-row">
+                        <label>Subfloor:</label>
+                        <input type="number" placeholder="%" step="0.1">
+                        <span>%</span>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="moistureDoc" onchange="updateProgress()">
+                    <label for="moistureDoc">All readings >25% photographed and documented</label>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="roomDim" onchange="updateProgress()">
+                    <label for="roomDim">Room dimensions measured and recorded</label>
+                    <input type="text" class="input-field" placeholder="Room dimensions (L x W x H)" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Psychrometric Readings -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('psychro')">
+                <span>🌡️ PSYCHROMETRIC READINGS</span>
+                <span class="toggle-icon" id="psychro-icon">▼</span>
+            </div>
+            <div class="section-content" id="psychro-content">
+                <div class="measurement-group">
+                    <h4>Environmental Conditions</h4>
+                    <div class="measurement-row">
+                        <label>Outdoor Temp:</label>
+                        <input type="number" placeholder="°F">
+                        <span>°F</span>
+                    </div>
+                    <div class="measurement-row">
+                        <label>Outdoor RH:</label>
+                        <input type="number" placeholder="%">
+                        <span>%</span>
+                    </div>
+                    <div class="measurement-row">
+                        <label>Affected Temp:</label>
+                        <input type="number" placeholder="°F">
+                        <span>°F</span>
+                    </div>
+                    <div class="measurement-row">
+                        <label>Affected RH:</label>
+                        <input type="number" placeholder="%">
+                        <span>%</span>
+                    </div>
+                    <div class="measurement-row">
+                        <label>Reference Temp:</label>
+                        <input type="number" placeholder="°F">
+                        <span>°F</span>
+                    </div>
+                    <div class="measurement-row">
+                        <label>Reference RH:</label>
+                        <input type="number" placeholder="%">
+                        <span>%</span>
+                    </div>
+                </div>
+                
+                <div style="background: #fef3c7; padding: 10px; border-radius: 4px; font-size: 13px;">
+                    <strong>Target Conditions:</strong><br>
+                    RH: &lt;50% | Temp: 70-85°F | Vapor Pressure: &gt;0.3 inches Hg
+                </div>
+            </div>
+        </div>
+
+        <!-- Classification -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('classification')">
+                <span>📋 IICRC CLASSIFICATION</span>
+                <span class="toggle-icon" id="classification-icon">▼</span>
+            </div>
+            <div class="section-content" id="classification-content">
+                <div class="checklist-item">
+                    <input type="checkbox" id="waterCat" onchange="updateProgress()">
+                    <label for="waterCat">Water category confirmed</label>
+                    <select class="input-field">
+                        <option>Category 1 (Clean Water)</option>
+                        <option>Category 2 (Gray Water)</option>
+                        <option>Category 3 (Black Water)</option>
+                    </select>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="lossClass" onchange="updateProgress()">
+                    <label for="lossClass">Loss class determined</label>
+                    <select class="input-field">
+                        <option>Class 1 (Minimal absorption)</option>
+                        <option>Class 2 (Significant absorption)</option>
+                        <option>Class 3 (Greatest absorption)</option>
+                        <option>Class 4 (Specialty drying)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('recommendations')">
+                <span>💡 RECOMMENDED ACTIONS</span>
+                <span class="toggle-icon" id="recommendations-icon">▼</span>
+            </div>
+            <div class="section-content" id="recommendations-content">
+                <div class="scenario-box">
+                    <div class="scenario-title">SCENARIO A: Minimal Impact (&lt;25%)</div>
+                    <p><strong>Action:</strong> Monitor and document natural drying<br>
+                    <strong>Equipment:</strong> None initially<br>
+                    <strong>Timeline:</strong> 24-48 hours monitoring<br>
+                    <strong>Cost:</strong> Assessment fee (~$150-300)</p>
+                </div>
+
+                <div class="scenario-box">
+                    <div class="scenario-title">SCENARIO B: Moderate Impact (25-70%)</div>
+                    <p><strong>Action:</strong> Controlled drying with equipment<br>
+                    <strong>Equipment:</strong> 2-4 air movers, 1 dehumidifier<br>
+                    <strong>Timeline:</strong> 3-5 days<br>
+                    <strong>Cost:</strong> ~$800-1,500</p>
+                </div>
+
+                <div class="scenario-box">
+                    <div class="scenario-title">SCENARIO C: Significant Impact (&gt;70%)</div>
+                    <p><strong>Action:</strong> Material removal + aggressive drying<br>
+                    <strong>Equipment:</strong> Material removal, 4-6 air movers, 1-2 dehumidifiers<br>
+                    <strong>Timeline:</strong> 5-7 days<br>
+                    <strong>Cost:</strong> ~$2,500-5,000</p>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="scenario" onchange="updateProgress()">
+                    <label for="scenario">Recommended scenario selected and explained to client</label>
+                    <select class="input-field">
+                        <option>Scenario A (Minimal)</option>
+                        <option>Scenario B (Moderate)</option>
+                        <option>Scenario C (Significant)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('documentation')">
+                <span>📸 DOCUMENTATION & NOTES</span>
+                <span class="toggle-icon" id="documentation-icon">▼</span>
+            </div>
+            <div class="section-content" id="documentation-content">
+                <div class="checklist-item">
+                    <input type="checkbox" id="photos" onchange="updateProgress()">
+                    <label for="photos">All affected areas photographed</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="readings" onchange="updateProgress()">
+                    <label for="readings">Moisture readings recorded with locations</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="clientComm" onchange="updateProgress()">
+                    <label for="clientComm">Client communication documented</label>
+                </div>
+                
+                <textarea class="notes-area" placeholder="Additional notes, observations, or client concerns..."></textarea>
+            </div>
+        </div>
+
+        <div class="submit-section">
+            <input type="text" placeholder="Technician Name" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #d1d5db; border-radius: 4px;" />
+            <input type="text" placeholder="Project Number" style="width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #d1d5db; border-radius: 4px;" />
+            <button class="submit-btn" onclick="generateReport()">Generate Assessment Report</button>
+        </div>
+    </div>
+
+    <script>
+        let totalTasks = 0;
+        let completedTasks = 0;
+
+        function initializeApp() {
+            // Count total checkboxes
+            totalTasks = document.querySelectorAll('input[type="checkbox"]').length;
+            document.getElementById('totalTasks').textContent = totalTasks;
+            
+            // Set discovery time to current time
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('discoveryTime').value = now.toISOString().slice(0, 16);
+            
+            updateProgress();
+        }
+
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId + '-content');
+            const icon = document.getElementById(sectionId + '-icon');
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                icon.classList.remove('rotated');
+            } else {
+                content.classList.add('active');
+                icon.classList.add('rotated');
+            }
+        }
+
+        function updateProgress() {
+            completedTasks = document.querySelectorAll('input[type="checkbox"]:checked').length;
+            const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('progressPercent').textContent = percentage + '%';
+            document.getElementById('progressFill').style.width = percentage + '%';
+            
+            // Update checklist item styling
+            document.querySelectorAll('.checklist-item').forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                if (checkbox && checkbox.checked) {
+                    item.classList.add('checked');
+                } else {
+                    item.classList.remove('checked');
+                }
+            });
+        }
+
+        function generateReport() {
+            const data = {
+                projectInfo: {
+                    location: document.getElementById('location').value,
+                    propertySize: document.getElementById('propertySize').value,
+                    waterCategory: document.getElementById('waterCategory').value,
+                    lossType: document.getElementById('lossType').value,
+                    discoveryTime: document.getElementById('discoveryTime').value
+                },
+                progress: {
+                    completed: completedTasks,
+                    total: totalTasks,
+                    percentage: Math.round((completedTasks / totalTasks) * 100)
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            // In a real implementation, this would send to your server
+            alert(`Assessment Complete!\n\nProgress: ${data.progress.completed}/${data.progress.total} tasks (${data.progress.percentage}%)\n\nReport data ready for submission to system.`);
+            
+            // Could integrate with Slack webhook here
+            console.log('Assessment Data:', data);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Auto-save functionality (optional)
+        setInterval(() => {
+            const formData = new FormData();
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                if (input.type === 'checkbox') {
+                    formData.append(input.id, input.checked);
+                } else {
+                    formData.append(input.id, input.value);
+                }
+            });
+            // In production, you'd save this data
+            console.log('Auto-saving progress...');
+        }, 30000); // Auto-save every 30 seconds
+    </script>
+</body>
+</html>
